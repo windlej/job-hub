@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spokane Job Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Spokane Job Tracker</h1>
+        
+        <div class="add-job-form">
+            <h2>Add Job Opportunity</h2>
+            <form id="jobForm">
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" list="companyList" required>
+                    <datalist id="companyList">
+                        <option value="URM">
+                        <option value="NoaNet">
+                        <option value="F5">
+                        <option value="TierPoint">
+                        <option value="Avista">
+                        <option value="Compunet">
+                        <option value="OSOS">
+                        <option value="WSDOT">
+                        <option value="Other">
+                    </datalist>
+                </div>
+                
+                <div class="form-group">
+                    <label for="title">Job Title</label>
+                    <input type="text" id="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="url">Job URL</label>
+                    <input type="url" id="url" placeholder="https://...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" placeholder="Spokane, WA / Remote / Hybrid">
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option value="Interested">Interested</option>
+                        <option value="Applied">Applied</option>
+                        <option value="Interviewing">Interviewing</option>
+                        <option value="Offer">Offer</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="salary">Salary/Range</label>
+                    <input type="text" id="salary" placeholder="e.g., $80k-100k">
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="3"></textarea>
+                </div>
+                
+                <button type="submit">Add Job</button>
+            </form>
+        </div>
+        
+        <div class="job-list">
+            <h2>Tracked Jobs</h2>
+            <div class="filters">
+                <select id="statusFilter">
+                    <option value="all">All Statuses</option>
+                    <option value="Interested">Interested</option>
+                    <option value="Applied">Applied</option>
+                    <option value="Interviewing">Interviewing</option>
+                    <option value="Offer">Offer</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Closed">Closed</option>
+                </select>
+                <input type="text" id="companyFilter" placeholder="Filter by company...">
+            </div>
+            <div id="jobs"></div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
