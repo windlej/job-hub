@@ -1,0 +1,33 @@
+{
+  "tech": [
+    {"name": "URM", "url": "https://www.urm.com/careers/"},
+    {"name": "NoaNet", "url": "https://www.noanet.net/careers/"},
+    {"name": "F5", "url": "https://www.f5.com/company/careers"},
+    {"name": "TierPoint", "url": "https://www.tierpoint.com/careers/"},
+    {"name": "SEL", "url": "https://selinc.com/company/careers/"}
+  ],
+  "utilities": [
+    {"name": "Avista", "url": "https://www.avistacorp.com/careers"},
+    {"name": "Itron", "url": "https://www.itron.com/careers"},
+    {"name": "Black Hills Energy", "url": "https://www.blackhillsenergy.com/careers"}
+  ],
+  "government": [
+    {"name": "OSOS", "url": "https://www.sos.wa.gov/about-us/careers/"},
+    {"name": "WSDOT", "url": "https://wsdot.wa.gov/about/jobs"},
+    {"name": "City of Spokane", "url": "https://www.spokanecity.org/government/employment/"},
+    {"name": "Spokane County", "url": "https://www.spokanecounty.org/356/Employment"}
+  ],
+  "finance": [
+    {"name": "Gesa CU", "url": "https://www.gesa.com/careers"},
+    {"name": "Numerica CU", "url": "https://www.numericacu.com/careers"},
+    {"name": "STCU", "url": "https://www.stcu.org/careers"},
+    {"name": "Global CU", "url": "https://www.globalcu.org/careers"},
+    {"name": "Washington Trust Bank", "url": "https://www.watrust.com/careers"}
+  ],
+  "healthcare": [
+    {"name": "Providence", "url": "https://www.providence.org/careers"},
+    {"name": "MultiCare", "url": "https://jobs.multicare.org/"},
+    {"name": "Spokane Public Schools", "url": "https://www.spokaneschools.org/jobs"},
+    {"name": "EWU", "url": "https://jobs.hr.ewu.edu/"}
+  ]
+}
