@@ -38,3 +38,7 @@ A simple, client-side tool to track IT job opportunities in Spokane, WA and beyo
 ## Data Storage
 
 All data is stored in your browser's localStorage. Nothing is sent to any server - it's completely private to your device.
+
+## Career Dashboards
+
+Also includes a curated list of Spokane IT career pages at [dashboard.html](https://windlej.github.io/job-hub/dashboard.html)
