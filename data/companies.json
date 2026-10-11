@@ -1,30 +1,30 @@
 {
   "updated": "2026-10-10",
   "spokane_tech": [
-    {"name": "URM", "careers": "https://www.urm.com/careers/", "notes": "Good benefits"},
+    {"name": "URM", "careers": "https://recruiting.paylocity.com/recruiting/jobs/All/6650dbeb-608a-4cef-a3a3-c10e3a6291cd/URM-Stores-Inc", "notes": "Good benefits"},
     {"name": "NoaNet", "careers": "https://www.noanet.net/careers/", "notes": "Spokane office"},
-    {"name": "F5", "careers": "https://www.f5.com/company/careers", "notes": ""},
-    {"name": "TierPoint", "careers": "https://www.tierpoint.com/careers/", "notes": ""},
-    {"name": "SEL", "careers": "https://selinc.com/company/careers/", "notes": "Large tech employer"},
-    {"name": "Compunet", "careers": "https://www.compunet.biz/", "notes": "Check for roles"}
+    {"name": "F5", "careers": "https://ffive.wd5.myworkdayjobs.com/f5jobs", "notes": ""},
+    {"name": "TierPoint", "careers": "https://careers-tierpoint.icims.com/jobs/search?ss=1&hashed=-626007049", "notes": ""},
+    {"name": "SEL", "careers": "https://selinc.wd1.myworkdayjobs.com/SEL/20/refreshFacet/318c8bb6f553100021d223d9780d30be", "notes": "Large tech employer"},
+    {"name": "Compunet", "careers": "https://job-boards.greenhouse.io/compunetinc", "notes": ""}
   ],
   "utilities": [
-    {"name": "Avista", "careers": "https://www.avistacorp.com/careers", "notes": ""},
+    {"name": "Avista", "careers": "https://recruiting2.ultipro.com/AVI1000AMAST/JobBoard/362abf68-95c3-4b17-a39d-76a6efe5ff18", "notes": ""},
     {"name": "Itron", "careers": "https://www.itron.com/careers", "notes": ""},
     {"name": "Black Hills Energy", "careers": "https://www.blackhillsenergy.com/careers", "notes": ""}
   ],
   "government": [
-    {"name": "OSOS", "careers": "https://www.sos.wa.gov/about-us/careers/", "notes": ""},
-    {"name": "WSDOT", "careers": "https://wsdot.wa.gov/about/jobs", "notes": ""},
-    {"name": "City of Spokane", "careers": "https://www.spokanecity.org/government/employment/", "notes": ""},
-    {"name": "Spokane County", "careers": "https://www.spokanecounty.org/356/Employment", "notes": ""}
+    {"name": "OSOS", "careers": "https://www.governmentjobs.com/careers/washington?department[0]=Office%20of%20the%20Secretary%20of%20State&sort=PostingDate%7CDescending", "notes": ""},
+    {"name": "WSDOT", "careers": "https://www.governmentjobs.com/careers/washington/wsdot", "notes": ""},
+    {"name": "City of Spokane", "careers": "https://my.spokanecity.org/jobs/classified/", "notes": ""},
+    {"name": "Spokane County", "careers": "https://spokanecounty.wd503.myworkdayjobs.com/en-US/Spokane", "notes": ""}
   ],
   "finance": [
-    {"name": "Gesa CU", "careers": "https://www.gesa.com/careers", "notes": ""},
-    {"name": "Numerica CU", "careers": "https://www.numericacu.com/careers", "notes": ""},
-    {"name": "STCU", "careers": "https://www.stcu.org/careers", "notes": ""},
-    {"name": "Global CU", "careers": "https://www.globalcu.org/careers", "notes": ""},
-    {"name": "Washington Trust Bank", "careers": "https://www.watrust.com/careers", "notes": ""}
+    {"name": "Gesa CU", "careers": "https://www.paycomonline.net/v4/ats/web.php/portal/E7A3819EACC22746FA78AB1D19A8ACB0/career-page", "notes": ""},
+    {"name": "Numerica CU", "careers": "https://recruiting.paylocity.com/recruiting/jobs/All/3e0b08f9-66f1-4617-9a26-159571b53dc2/Numerica-Credit-Union", "notes": ""},
+    {"name": "STCU", "careers": "https://careers.smartrecruiters.com/STCU1", "notes": ""},
+    {"name": "Global CU", "careers": "https://careers-globalcu.icims.com/jobs/search?mobile=false&width=1694&height=500&bga=true&needsRedirect=false&jan1offset=-480&jun1offset=-420", "notes": ""},
+    {"name": "Washington Trust Bank", "careers": "https://recruiting2.ultipro.com/WAS1000WTB/JobBoard/cb002c76-8419-4941-9c78-d28ae4e9c89e/?q=&o=postedDateDesc&w=&wc=&we=&wpst=", "notes": ""}
   ],
   "healthcare_edu": [
     {"name": "Providence", "careers": "https://www.providence.org/careers", "notes": ""},
