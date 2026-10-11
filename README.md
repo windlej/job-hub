@@ -42,3 +42,6 @@ All data is stored in your browser's localStorage. Nothing is sent to any server
 ## Career Dashboards
 
 Also includes a curated list of Spokane IT career pages at [dashboard.html](https://windlej.github.io/job-hub/dashboard.html)
+
+## All Companies
+See the complete consolidated list in [dashboard.html](https://windlej.github.io/job-hub/dashboard.html) (31 companies across tech, utilities, government, finance, healthcare/education, tribal).
