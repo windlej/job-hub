@@ -32,3 +32,38 @@ Potential Spokane area/remote-friendly companies:
 - Wheelhouse DMG
 - Spokane tech firms from IgniteNW
 - Cowles Company (IT roles)
+
+## Additional Spokane/Regional to Add
+
+- Providence Health Plan / Providence IT
+- MultiCare Health System
+- Kaiser Permanente (sometimes remote)
+- CHAS Health
+- Spokane Tribal Network
+- Kalispel Tribe of Indians - https://kalispeltribe.com/careers/
+- Spokane Indians/Baseball? (maybe not IT)
+- Gonzaga University - https://gonzaga.peopleadmin.com/
+- Community Colleges of Spokane - https://jobs.ccs.spokane.edu/
+- Washington State University (WSU Spokane) - https://wsu.wd5.myworkdayjobs.com/WSU_Jobs
+- D.A. Davidson Companies - https://dadavidson.wd5.myworkdayjobs.com/DADavidson
+- Sterling Bank (now part of Umpqua?) 
+- Banner Bank - https://bannerbank.wd1.myworkdayjobs.com/BannerBank
+- HUB International
+- PayneWest Insurance
+- Fisher Communications? 
+- Next IT Corp (if still around)
+- Two Barrels
+- Medcurity
+- Boostability
+- Parkview Services
+- ISC (Information Systems Consulting)
+- Systems Northwest
+- 2nd Watch - https://2ndwatch.bamboohr.com/careers/
+- AeroFlite
+- Ametek SCP
+- Key Tronic - https://www.keytronic.com/careers/
+- Jubilant HollisterStier - https://jubilantcareer.jubl.com/
+- Onsemi
+- Phillips Medisize
+- Regal Beloit
+- Triumph Composite Systems
