@@ -1,0 +1,48 @@
+{
+  "sources": [
+    {
+      "name": "Compunet",
+      "type": "greenhouse",
+      "category": "tech",
+      "token": "compunetinc"
+    },
+    {
+      "name": "STCU",
+      "type": "smartrecruiters",
+      "category": "finance",
+      "token": "STCU1"
+    },
+    {
+      "name": "F5",
+      "type": "workday",
+      "category": "tech",
+      "host": "wd5",
+      "tenant": "ffive",
+      "site": "f5jobs"
+    },
+    {
+      "name": "SEL",
+      "type": "workday",
+      "category": "tech",
+      "host": "wd1",
+      "tenant": "selinc",
+      "site": "SEL"
+    },
+    {
+      "name": "Spokane County",
+      "type": "workday",
+      "category": "government",
+      "host": "wd503",
+      "tenant": "spokanecounty",
+      "site": "Spokane"
+    },
+    {
+      "name": "WSU",
+      "type": "workday",
+      "category": "healthcare_edu",
+      "host": "wd5",
+      "tenant": "wsu",
+      "site": "WSU_Jobs"
+    }
+  ]
+}
