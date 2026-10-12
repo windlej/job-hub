@@ -6,8 +6,9 @@ Supported source types (see data/sources.json):
   - smartrecruiters:GET  https://api.smartrecruiters.com/v1/companies/{token}/postings
   - workday:        POST https://{tenant}.{host}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs
 
-No third-party dependencies; uses only the standard library so it runs
-locally and in GitHub Actions without extra installs.
+Relevance criteria live in data/criteria.json so they can be tuned without
+touching code. No third-party dependencies; uses only the standard library so
+it runs locally and in GitHub Actions without extra installs.
 """
 import json
 import re
@@ -18,51 +19,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCES_PATH = ROOT / "data" / "sources.json"
+CRITERIA_PATH = ROOT / "data" / "criteria.json"
 OUT_PATH = ROOT / "jobs.json"
 
 USER_AGENT = "Mozilla/5.0 (compatible; JobHubBot/1.0; +https://github.com/windlej/job-hub)"
 HTTP_TIMEOUT = 30
 WORKDAY_PAGE_SIZE = 20
 WORKDAY_MAX_JOBS = 200
-
-# Unambiguous technology keywords: a title match is treated as an IT job.
-STRONG_IT_KEYWORDS = [
-    "software", "developer", "programmer", "full stack", "front end", "back end",
-    "network", "sysadmin", "sys admin", "help desk", "helpdesk", "security",
-    "cybersecurity", "infosec", "database", "cloud", "devops", "infrastructure",
-    "desktop", "windows", "linux", "unix", "aws", "azure", "kubernetes", "docker",
-    "site reliability", "sre", "data engineer", "data scientist", "machine learning",
-    "qa", "tester", "firmware", "embedded", "information technology", "it support",
-    "systems administrator", "systems engineer", "systems analyst", "web developer",
-    "sql", "python", "java", "javascript",
-]
-
-# Context-dependent keywords: count only when no non-IT discipline is present.
-WEAK_IT_KEYWORDS = [
-    "it", "engineer", "administrator", "analyst", "support", "technical",
-    "architect", "technician", "admin",
-]
-
-# Non-IT disciplines/domains that would otherwise match a weak keyword.
-NON_IT_KEYWORDS = [
-    "mechanical", "electrical", "chemical", "civil", "structural", "welding",
-    "manufacturing", "industrial", "process", "quality", "hardware", "emc",
-    "compliance", "environmental", "ehs", "geotechnical", "facilities",
-    "maintenance", "plumber", "electrician", "hvac", "machinist", "buyer",
-    "accountant", "accounting", "financial", "fiscal", "payroll", "nurse",
-    "clinical", "medical", "veterinary", "patient", "custodian", "food",
-    "chef", "cook", "driver", "warehouse", "sales", "marketing", "retail",
-    "recruiting", "human resources", "supply chain", "logistics",
-    "customer service", "detention", "classroom", "technician",
-    "administrative", "postdoctoral", "production", "calibration",
-]
-
-# Keep jobs in the Spokane region or remote. Matched case-insensitively.
-REGION_KEYWORDS = [
-    "spokane", "pullman", "liberty lake", "airway heights", "cheney", "medical lake",
-    "coeur", "post falls", "idaho", "washington", "remote",
-]
-REGION_PATTERNS = [re.compile(r"\bwa\b", re.IGNORECASE)]
+WORKDAY_ENRICH_DATES = True  # fetch each matched job's detail for a real posted date
 
 
 def fetch_json(url, payload=None):
@@ -76,38 +40,46 @@ def fetch_json(url, payload=None):
         return json.loads(resp.read().decode("utf-8", "ignore"))
 
 
-def _compile(keys):
+def load_criteria():
+    return json.loads(CRITERIA_PATH.read_text())
+
+
+def compile_patterns(keys):
     patterns = []
     for k in keys:
         escaped = re.escape(k)
         if len(k) <= 3:
-            # short tokens (it, qa, sre, aws) must stand alone
+            # short tokens (it, wa, qa) must stand alone
             patterns.append(re.compile(rf"\b{escaped}\b", re.IGNORECASE))
         else:
             patterns.append(re.compile(rf"\b{escaped}", re.IGNORECASE))
     return patterns
 
 
-STRONG_IT_PATTERNS = _compile(STRONG_IT_KEYWORDS)
-WEAK_IT_PATTERNS = _compile(WEAK_IT_KEYWORDS)
-NON_IT_PATTERNS = _compile(NON_IT_KEYWORDS)
+CRITERIA = load_criteria()
+INCLUDE_PATTERNS = compile_patterns(CRITERIA["include"])
+WEAK_PATTERNS = compile_patterns(CRITERIA["weak"])
+EXCLUDE_PATTERNS = compile_patterns(CRITERIA["exclude"])
+REGION_WORDS = CRITERIA.get("region", [])
+REGION_PATTERNS = compile_patterns(CRITERIA.get("region_word", []))
 
 
 def is_it_job(title):
+    """Include beats nothing; exclude beats include; weak counts when no match above."""
     if not title:
         return False
-    if any(p.search(title) for p in STRONG_IT_PATTERNS):
-        return True
-    if any(p.search(title) for p in NON_IT_PATTERNS):
+    if any(p.search(title) for p in EXCLUDE_PATTERNS):
         return False
-    return any(p.search(title) for p in WEAK_IT_PATTERNS)
+    if any(p.search(title) for p in INCLUDE_PATTERNS):
+        return True
+    return any(p.search(title) for p in WEAK_PATTERNS)
 
 
 def is_relevant_location(location):
     if not location:
         return True
     loc = location.lower()
-    if any(k in loc for k in REGION_KEYWORDS):
+    if any(k in loc for k in REGION_WORDS):
         return True
     return any(p.search(location) for p in REGION_PATTERNS)
 
@@ -183,6 +155,16 @@ def scrape_smartrecruiters(source):
     return jobs
 
 
+def workday_detail(source, external_path):
+    """Fetch an individual Workday posting for its published/start date."""
+    tenant, host, site = source["tenant"], source["host"], source["site"]
+    url = f"https://{tenant}.{host}.myworkdayjobs.com/wday/cxs/{tenant}/{site}{external_path}"
+    data = fetch_json(url)
+    info = data.get("jobPostingInfo") or {}
+    date = info.get("startDate") or parse_relative_date(info.get("postedOn"))
+    return edge_iso(date)
+
+
 def scrape_workday(source):
     tenant, host, site = source["tenant"], source["host"], source["site"]
     endpoint = f"https://{tenant}.{host}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs"
@@ -203,6 +185,7 @@ def scrape_workday(source):
                 "title": item.get("title", ""),
                 "location": item.get("locationsText", ""),
                 "url": base_url + item.get("externalPath", ""),
+                "external_path": item.get("externalPath", ""),
                 "posted": parse_relative_date(item.get("postedOn")),
             })
         offset += WORKDAY_PAGE_SIZE
@@ -235,6 +218,16 @@ def collect():
             j for j in found
             if is_it_job(j["title"]) and is_relevant_location(j["location"])
         ]
+        if WORKDAY_ENRICH_DATES and source.get("type") == "workday":
+            # Workday list endpoints often omit `postedOn`; backfill from detail.
+            for job in relevant:
+                try:
+                    if not job.get("posted"):
+                        job["posted"] = workday_detail(source, job["external_path"])
+                except (urllib.error.URLError, urllib.error.HTTPError, ValueError):
+                    pass
+            for job in relevant:
+                job.pop("external_path", None)
         print(f"  {source['name']}: {len(found)} postings -> {len(relevant)} IT matches")
         all_jobs.extend(relevant)
     return all_jobs

@@ -26,9 +26,11 @@ browser (not free in GitHub Actions without workarounds):
 
 ## Relevance filtering
 
-Titles must match a strong IT keyword (`software`, `network`, `firmware`, ...), or a
-weaker one (`engineer`, `analyst`, `support`) with no non-IT discipline present.
-Locations are kept when they are in the Spokane region or remote. Tune the keyword
-lists at the top of `scripts/scrape_jobs.py`.
+Criteria live in `data/criteria.json` (no code changes needed to tune):
+- `include`: must-match keywords (help desk, desktop, sysadmin, network, security, ...)
+- `weak`: context-dependent (support, analyst, administrator) - kept only if no `exclude` term matches
+- `exclude`: disciplines to drop (software, mechanical, cloud, financial, security officer, ...)
+- `region` / `region_word`: locations to keep (Spokane-area cities, remote, `wa`)
 
-Run locally with `python3 scripts/scrape_jobs.py`.
+Exclude beats include. Workday posted dates are backfilled from each matched
+job's detail endpoint. Run locally with `python3 scripts/scrape_jobs.py`.

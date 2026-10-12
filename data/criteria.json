@@ -1,0 +1,31 @@
+{
+  "include": [
+    "it", "help desk", "helpdesk", "it support", "desktop", "sysadmin", "sys admin",
+    "system administrator", "systems administrator", "network", "firewall",
+    "active directory", "information technology", "systems engineer",
+    "server administrator", "virtualization", "vmware",
+    "security", "cybersecurity", "infosec"
+  ],
+  "weak": ["support", "analyst", "administrator"],
+  "exclude": [
+    "software", "developer", "programmer", "web", "front end", "back end",
+    "full stack", "cloud", "devops", "sre", "machine learning", "data analyst",
+    "data entry", "data scientist", "data engineer", "database administrator",
+    "dba", "firmware", "embedded", "hardware", "rtl", "signal and power",
+    "power system", "protection", "component", "mechanical", "electrical",
+    "chemical", "civil", "structural", "welding", "manufacturing", "process",
+    "quality", "supplier quality", "automation", "production", "calibration",
+"field service", "electronics", "test", "customer service",
+    "engineering support", "administrative", "financial", "fiscal", "payroll",
+    "accounting", "business analyst", "sales", "marketing", "recruiting",
+    "human resources", "security officer", "security guard", "campus security",
+    "loss prevention", "nurse", "clinical", "medical", "veterinary",
+    "custodian", "food", "chef", "driver", "warehouse", "ehs",
+    "environmental", "classroom", "instruction"
+  ],
+  "region": [
+    "spokane", "pullman", "liberty lake", "airway heights", "cheney",
+    "medical lake", "deer park", "coeur", "post falls", "remote"
+  ],
+  "region_word": ["wa"]
+}
