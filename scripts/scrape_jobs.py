@@ -5,11 +5,16 @@ Supported source types (see data/sources.json):
   - greenhouse:     GET  https://boards-api.greenhouse.io/v1/boards/{token}/jobs
   - smartrecruiters:GET  https://api.smartrecruiters.com/v1/companies/{token}/postings
   - workday:        POST https://{tenant}.{host}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs
+  - neogov:         GET  https://www.governmentjobs.com/careers/{tenant}/home/loadJobsOnMaps
+  - icims:          GET  https://{portal}.icims.com/jobs/search?ss=1&in_iframe=1&pr={page}
+  - ultipro:        POST https://{host}/{tenant}/JobBoard/{board}/JobBoardView/LoadSearchResults
+  - paylocity:      GET  https://recruiting.paylocity.com/recruiting/jobs/All/{token}
 
 Relevance criteria live in data/criteria.json so they can be tuned without
 touching code. No third-party dependencies; uses only the standard library so
 it runs locally and in GitHub Actions without extra installs.
 """
+import html
 import json
 import re
 import urllib.error
@@ -27,10 +32,15 @@ HTTP_TIMEOUT = 30
 WORKDAY_PAGE_SIZE = 20
 WORKDAY_MAX_JOBS = 200
 WORKDAY_ENRICH_DATES = True  # fetch each matched job's detail for a real posted date
+UKG_PAGE_SIZE = 100
+UKG_MAX_JOBS = 500
+ICIMS_MAX_PAGES = 25
 
 
-def fetch_json(url, payload=None):
+def fetch_json(url, payload=None, extra_headers=None):
     headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
+    if extra_headers:
+        headers.update(extra_headers)
     body = None
     if payload is not None:
         body = json.dumps(payload).encode("utf-8")
@@ -38,6 +48,13 @@ def fetch_json(url, payload=None):
     req = urllib.request.Request(url, data=body, headers=headers)
     with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
         return json.loads(resp.read().decode("utf-8", "ignore"))
+
+
+def fetch_text(url):
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as resp:
+        return resp.read().decode("utf-8", "ignore")
 
 
 def load_criteria():
@@ -110,6 +127,91 @@ def edge_iso(value):
         return datetime.fromisoformat(value.replace("Z", "+00:00")).date().isoformat()
     except ValueError:
         return value
+
+
+def parse_us_date(value):
+    """NEOGOV returns posting dates as MM/DD/YY."""
+    if not value:
+        return None
+    for fmt in ("%m/%d/%y", "%m/%d/%Y"):
+        try:
+            return datetime.strptime(value, fmt).date().isoformat()
+        except ValueError:
+            pass
+    return None
+
+
+def extract_js_object(text, marker):
+    """Pull a balanced {...} JavaScript/JSON object literal out of page HTML."""
+    start = text.find(marker)
+    if start == -1:
+        return {}
+    brace = text.find("{", start)
+    if brace == -1:
+        return {}
+    depth = 0
+    in_string = False
+    escaped = False
+    quote = ""
+    for i in range(brace, len(text)):
+        ch = text[i]
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == quote:
+                in_string = False
+            continue
+        if ch in ('"', "'"):
+            in_string = True
+            quote = ch
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                try:
+                    return json.loads(text[brace:i + 1])
+                except ValueError:
+                    return {}
+    return {}
+
+
+def strip_tags(value):
+    return re.sub(r"<[^>]+>", "", html.unescape(value or "")).strip()
+
+
+def extract_icims_location(card):
+    """iCIMS portals vary; try the list-view field, then the detail fields."""
+    m = re.search(r'Job Locations</span>\s*<span[^>]*>\s*(.*?)\s*</span>', card, re.S)
+    if m:
+        return strip_tags(m.group(1))
+    fields = {}
+    for dt, dd in re.findall(
+        r'<dt class="iCIMS_JobHeaderField">(.*?)</dt>\s*'
+        r'<dd class="iCIMS_JobHeaderData">\s*<span[^>]*>(.*?)</span>',
+        card, re.S,
+    ):
+        fields[strip_tags(dt)] = strip_tags(dd)
+    city = fields.get("City")
+    state = fields.get("Select State") or fields.get("State")
+    if city:
+        return f"{city}, {state}".strip(", ")
+    return fields.get("Location", "")
+
+
+def ultipro_location(item):
+    parts = []
+    for loc in item.get("Locations") or []:
+        addr = loc.get("Address") or {}
+        city = addr.get("City")
+        state = (addr.get("State") or {}).get("Code")
+        if city:
+            parts.append(f"{city}, {state}" if state else city)
+        elif loc.get("LocalizedDescription"):
+            parts.append(loc["LocalizedDescription"])
+    return "; ".join(parts)
 
 
 def scrape_greenhouse(source):
@@ -194,10 +296,142 @@ def scrape_workday(source):
     return jobs
 
 
+def scrape_neogov(source):
+    """NEOGOV/GovernmentJobs exposes one JSON map/list per agency tenant.
+
+    The endpoint needs the XHR header (a session cookie is not required).
+    `department` narrows to a single agency, e.g. WSDOT or OSOS.
+    """
+    tenant = source["tenant"]
+    url = f"https://www.governmentjobs.com/careers/{tenant}/home/loadJobsOnMaps"
+    data = fetch_json(url, extra_headers={"X-Requested-With": "XMLHttpRequest"})
+    department = source.get("department")
+    jobs = []
+    for item in data.get("jobList", []):
+        if department and item.get("DepartmentName") != department:
+            continue
+        jobs.append({
+            "company": source["name"],
+            "title": item.get("Classification", ""),
+            "location": item.get("Location", ""),
+            "url": (
+                f"https://www.governmentjobs.com/jobs/{item.get('ID')}/"
+                f"{item.get('JobTitle', '')}"
+            ),
+            "posted": parse_us_date(item.get("PostingDate")),
+        })
+    return jobs
+
+
+def scrape_icims(source):
+    """iCIMS search is server-rendered HTML; `pr` is a zero-indexed page."""
+    portal = source["portal"]
+    jobs = []
+    seen = set()
+    for pr in range(ICIMS_MAX_PAGES):
+        url = f"https://{portal}.icims.com/jobs/search?ss=1&in_iframe=1&pr={pr}"
+        page = fetch_text(url)
+        cards = re.findall(
+            r'<li class="[^"]*iCIMS_JobCardItem[^"]*">(.*?)</li>', page, re.S
+        )
+        if not cards:
+            break
+        added = 0
+        for card in cards:
+            title_match = re.search(r"<h3[^>]*>(.*?)</h3>", card, re.S)
+            link_match = re.search(r'href="(https://[^"]+?/job)(?:\?[^"]*)?"', card)
+            if not (title_match and link_match):
+                continue
+            link = link_match.group(1)
+            if link in seen:
+                continue
+            seen.add(link)
+            added += 1
+            jobs.append({
+                "company": source["name"],
+                "title": strip_tags(title_match.group(1)),
+                "location": extract_icims_location(card),
+                "url": link,
+                "posted": None,
+            })
+        if added == 0:
+            break
+    return jobs
+
+
+def scrape_ultipro(source):
+    """UltiPro/UKG Pro Recruiting public job board search endpoint."""
+    host, tenant, board = source["host"], source["tenant"], source["board"]
+    endpoint = (
+        f"https://{host}/{tenant}/JobBoard/{board}/JobBoardView/LoadSearchResults"
+    )
+    base_url = f"https://{host}/{tenant}/JobBoard/{board}"
+    jobs = []
+    offset = 0
+    while True:
+        payload = {
+            "opportunitySearch": {
+                "Top": UKG_PAGE_SIZE,
+                "Skip": offset,
+                "QueryString": "",
+                "OrderBy": [
+                    {"Value": "postedDateDesc", "PropertyName": "PostedDate", "Ascending": False}
+                ],
+                "Filters": [],
+            }
+        }
+        data = fetch_json(endpoint, payload)
+        opportunities = data.get("opportunities", [])
+        for item in opportunities:
+            jobs.append({
+                "company": source["name"],
+                "title": item.get("Title", ""),
+                "location": ultipro_location(item),
+                "url": f"{base_url}/OpportunityDetail?opportunityId={item.get('Id')}",
+                "posted": edge_iso(item.get("PostedDate")),
+            })
+        total = data.get("totalCount")
+        offset += UKG_PAGE_SIZE
+        if not opportunities or (total is not None and offset >= total) or offset >= UKG_MAX_JOBS:
+            break
+    return jobs
+
+
+def scrape_paylocity(source):
+    """Paylocity boards embed the full job list as window.pageData (JSON)."""
+    token = source["token"]
+    page = fetch_text(f"https://recruiting.paylocity.com/recruiting/jobs/All/{token}")
+    data = extract_js_object(page, "window.pageData")
+    jobs = []
+    for item in data.get("Jobs", []):
+        loc = item.get("JobLocation") or {}
+        city, state = loc.get("City") or "", loc.get("State") or ""
+        name = item.get("LocationName") or ""
+        if city and state:
+            location = (
+                name if city.lower() in name.lower()
+                else f"{name} - {city}, {state}".strip(" -")
+            )
+        else:
+            location = name
+        jobs.append({
+            "company": source["name"],
+            "title": item.get("JobTitle", ""),
+            "location": location,
+            "url": f"https://recruiting.paylocity.com/recruiting/jobs/Details/{item.get('JobId')}",
+            "posted": edge_iso(item.get("PublishedDate")),
+        })
+    return jobs
+
+
 SCRAPERS = {
     "greenhouse": scrape_greenhouse,
     "smartrecruiters": scrape_smartrecruiters,
     "workday": scrape_workday,
+    "neogov": scrape_neogov,
+    "icims": scrape_icims,
+    "ultipro": scrape_ultipro,
+    "paylocity": scrape_paylocity,
 }
 
 

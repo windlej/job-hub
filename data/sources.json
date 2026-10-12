@@ -43,6 +43,60 @@
       "host": "wd5",
       "tenant": "wsu",
       "site": "WSU_Jobs"
+    },
+    {
+      "name": "OSOS",
+      "type": "neogov",
+      "category": "government",
+      "tenant": "washington",
+      "department": "Office of the Secretary of State"
+    },
+    {
+      "name": "WSDOT",
+      "type": "neogov",
+      "category": "government",
+      "tenant": "washington",
+      "department": "Dept. of Transportation"
+    },
+    {
+      "name": "TierPoint",
+      "type": "icims",
+      "category": "tech",
+      "portal": "careers-tierpoint"
+    },
+    {
+      "name": "Global CU",
+      "type": "icims",
+      "category": "finance",
+      "portal": "careers-globalcu"
+    },
+    {
+      "name": "Avista",
+      "type": "ultipro",
+      "category": "utilities",
+      "host": "recruiting2.ultipro.com",
+      "tenant": "AVI1000AMAST",
+      "board": "362abf68-95c3-4b17-a39d-76a6efe5ff18"
+    },
+    {
+      "name": "Washington Trust Bank",
+      "type": "ultipro",
+      "category": "finance",
+      "host": "recruiting2.ultipro.com",
+      "tenant": "WAS1000WTB",
+      "board": "cb002c76-8419-4941-9c78-d28ae4e9c89e"
+    },
+    {
+      "name": "URM",
+      "type": "paylocity",
+      "category": "tech",
+      "token": "6650dbeb-608a-4cef-a3a3-c10e3a6291cd"
+    },
+    {
+      "name": "Numerica CU",
+      "type": "paylocity",
+      "category": "finance",
+      "token": "3e0b08f9-66f1-4617-9a26-159571b53dc2"
     }
   ]
 }
