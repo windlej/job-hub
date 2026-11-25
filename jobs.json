@@ -1,6 +1,20 @@
 {
-  "lastUpdated": "2026-11-24T19:20:13Z",
+  "lastUpdated": "2026-11-25T18:24:32Z",
   "jobs": [
+    {
+      "company": "Avista",
+      "title": "Risk & Energy Analyst",
+      "location": "Spokane, WA",
+      "url": "https://recruiting2.ultipro.com/AVI1000AMAST/JobBoard/362abf68-95c3-4b17-a39d-76a6efe5ff18/OpportunityDetail?opportunityId=fa361384-6cbf-4ab3-93be-1ff9aea498a5",
+      "posted": "2026-11-25"
+    },
+    {
+      "company": "F5",
+      "title": "Principal Site Reliability Engineer - Networking",
+      "location": "Spokane Valley",
+      "url": "https://ffive.wd5.myworkdayjobs.com/f5jobs/job/Spokane-Valley/Principal-Site-Reliability-Engineer---Networking_RP1039371",
+      "posted": "2026-11-24"
+    },
     {
       "company": "STCU",
       "title": "Member Support & Resolution Representative",
@@ -73,13 +87,6 @@
     },
     {
       "company": "Washington Trust Bank",
-      "title": "Credit Analyst I-III",
-      "location": "Coeur d'Alene, ID",
-      "url": "https://recruiting2.ultipro.com/WAS1000WTB/JobBoard/cb002c76-8419-4941-9c78-d28ae4e9c89e/OpportunityDetail?opportunityId=8ed99549-4e94-4b1f-9fe6-f233c9f17428",
-      "posted": "2026-10-20"
-    },
-    {
-      "company": "Washington Trust Bank",
       "title": "Credit Analyst II/III",
       "location": "Spokane, WA",
       "url": "https://recruiting2.ultipro.com/WAS1000WTB/JobBoard/cb002c76-8419-4941-9c78-d28ae4e9c89e/OpportunityDetail?opportunityId=f1af6e4e-5235-4929-82bb-0442a8fb1aa0",
@@ -91,6 +98,13 @@
       "location": "Portland, OR 97224; Seattle, WA 98028",
       "url": "https://job-boards.greenhouse.io/compunetinc/jobs/5147446008",
       "posted": "2026-03-09"
+    },
+    {
+      "company": "Global CU",
+      "title": "Desktop Support Technician I, II, III",
+      "location": "Renton, WA",
+      "url": "https://careers-globalcu.icims.com/jobs/9716/desktop-support-technician-i%2c-ii%2c-iii/job",
+      "posted": null
     }
   ]
 }
